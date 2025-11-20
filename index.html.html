@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <title>🎁 生日驚喜</title>
+  <script>
+    const unlockTime = new Date("2025-11-20T23:00:00+08:00");
+    const correctPassword = "20251120";
+
+    function checkAccess() {
+      const now = new Date();
+      const input = document.getElementById("pw").value;
+
+      if (now < unlockTime && input !== correctPassword) {
+        alert("尚未開放，或密碼錯誤。");
+        return;
+      }
+
+      document.getElementById("gate").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    }
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      padding: 40px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #content img {
+      max-width: 90%;
+      margin: 20px auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="gate">
+    <h2>🎁 生日驚喜尚未開放</h2>
+    <p>請於 <strong>今晚11:00</strong> 後再次掃描，或輸入密碼提前解鎖：</p>
+    <input type="password" id="pw" placeholder="請輸入密碼">
+    <br>
+    <button onclick="checkAccess()">解鎖</button>
+  </div>
+
+  <div id="content" style="display:none;">
+    <h2>🎉 生日快樂！</h2>
+    <img src="image1.png" alt="生日卡第1頁">
+    <img src="image2.png" alt="生日卡第2頁">
+  </div>
+</body>
+</html>
