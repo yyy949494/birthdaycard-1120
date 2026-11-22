@@ -2,22 +2,40 @@
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎁 生日驚喜</title>
   <script>
-    const unlockTime = new Date("2025-11-20T23:00:00+08:00");
-    const correctPassword = "20251120";
-
     function checkAccess() {
-      const now = new Date();
-      const input = document.getElementById("pw").value;
+      const input = document.getElementById("pw").value.trim();
 
-      if (now < unlockTime && input !== correctPassword) {
-        alert("尚未開放，或密碼錯誤。");
-        return;
+      if (input === "20251120") {
+        // 輸入 20251120：顯示去年內容
+        document.getElementById("gate").style.display = "none";
+        document.getElementById("content-2025").style.display = "block";
+        document.getElementById("content-2026").style.display = "none";
+      } else if (input === "20261120") {
+        // 輸入 20261120：顯示今年內容
+        document.getElementById("gate").style.display = "none";
+        document.getElementById("content-2025").style.display = "none";
+        document.getElementById("content-2026").style.display = "block";
+      } else {
+        alert("密碼錯誤，請再試一次！");
       }
+    }
 
-      document.getElementById("gate").style.display = "none";
-      document.getElementById("content").style.display = "block";
+    // 支援按 Enter 鍵直接解鎖
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        checkAccess();
+      }
+    }
+
+    // 返回密碼輸入畫面（方便切換不同年份）
+    function goBack() {
+      document.getElementById("pw").value = "";
+      document.getElementById("gate").style.display = "block";
+      document.getElementById("content-2025").style.display = "none";
+      document.getElementById("content-2026").style.display = "none";
     }
   </script>
   <style>
@@ -25,33 +43,69 @@
       font-family: sans-serif;
       text-align: center;
       background-color: #f9f9f9;
-      padding: 40px;
+      padding: 40px 20px;
     }
     input, button {
-      padding: 10px;
+      padding: 10px 16px;
       font-size: 16px;
       margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
-    #content img {
+    button {
+      background-color: #ff6b81;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff4757;
+    }
+    .back-btn {
+      background-color: #888;
+      font-size: 14px;
+      margin-top: 30px;
+    }
+    .card-content img {
       max-width: 90%;
       margin: 20px auto;
       display: block;
+      border-radius: 8px;
+    }
+    .message {
+      max-width: 600px;
+      margin: 15px auto;
+      line-height: 1.6;
+      font-size: 18px;
+      color: #333;
     }
   </style>
 </head>
 <body>
+  <!-- 密碼輸入區 -->
   <div id="gate">
-    <h2>🎁 生日驚喜尚未開放</h2>
-    <p>請於 <strong>今晚11:00</strong> 後再次掃描，或輸入密碼提前解鎖：</p>
-    <input type="password" id="pw" placeholder="請輸入密碼">
+    <h2>🎁 專屬生日驚喜</h2>
+    <p>請輸入專屬密碼解鎖你的生日卡片：</p>
+    <input type="password" id="pw" placeholder="請輸入密碼" onkeypress="handleKeyPress(event)">
     <br>
     <button onclick="checkAccess()">解鎖</button>
   </div>
 
-  <div id="content" style="display:none;">
-    <h2>🎉 生日快樂！</h2>
-    <img src="image1.png" alt="">
-    <img src="image2.png" alt="">
+  <!-- 2025 年內容（密碼：20251120） -->
+  <div id="content-2025" class="card-content" style="display:none;">
+    <h2>🎉 2025 生日快樂！</h2>
+    <img src="image1.png" alt="2025回憶1">
+    <img src="image2.png" alt="2025回憶2">
+    <button class="back-btn" onclick="goBack()">輸入其他年份密碼</button>
+  </div>
+
+  <!-- 2026 年內容（密碼：20261120） -->
+  <div id="content-2026" class="card-content" style="display:none;">
+    <h2>🎂 2026 生日快樂！</h2>
+    <p class="message">在這裡寫下你想說的 2026 年祝福語！</p>
+    <img src="image2026_1.png" alt="2026驚喜1">
+    <img src="image2026_2.png" alt="2026驚喜2">
+    <button class="back-btn" onclick="goBack()">輸入其他年份密碼</button>
   </div>
 </body>
 </html>
