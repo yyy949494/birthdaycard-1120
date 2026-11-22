@@ -3,109 +3,314 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎁 生日驚喜</title>
+  <title>🎁 專屬生日驚喜</title>
+  <!-- 彩帶特效庫 -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
-    function checkAccess() {
-      const input = document.getElementById("pw").value.trim();
+    // 噴發呼應夜空與小鳥色系的紅、金、暖橘彩帶
+    function launchConfetti() {
+      const colors = ['#ff4757', '#ffa502', '#ffd32a', '#ff6b81', '#ffffff'];
+      confetti({
+        particleCount: 100,
+        spread: 75,
+        origin: { y: 0.5 },
+        colors: colors
+      });
+      setTimeout(() => {
+        confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+        confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+      }, 400);
+    }
 
-      if (input === "20251120") {
-        // 輸入 20251120：顯示去年內容
+    function checkAccess() {
+      const pwInput = document.getElementById("pw");
+      const input = pwInput.value.trim();
+      const gateBox = document.getElementById("gate-box");
+      const errorMsg = document.getElementById("error-msg");
+
+      if (input === "kelly20251120") {
+        errorMsg.style.display = "none";
         document.getElementById("gate").style.display = "none";
         document.getElementById("content-2025").style.display = "block";
         document.getElementById("content-2026").style.display = "none";
-      } else if (input === "20261120") {
-        // 輸入 20261120：顯示今年內容
+        window.scrollTo(0, 0);
+        launchConfetti();
+      } else if (input === "kelly20261120") {
+        errorMsg.style.display = "none";
         document.getElementById("gate").style.display = "none";
         document.getElementById("content-2025").style.display = "none";
         document.getElementById("content-2026").style.display = "block";
+        window.scrollTo(0, 0);
+        launchConfetti();
       } else {
-        alert("密碼錯誤，請再試一次！");
+        errorMsg.style.display = "block";
+        gateBox.classList.remove("shake");
+        void gateBox.offsetWidth;
+        gateBox.classList.add("shake");
+        pwInput.value = "";
+        pwInput.focus();
       }
     }
 
-    // 支援按 Enter 鍵直接解鎖
     function handleKeyPress(event) {
       if (event.key === "Enter") {
         checkAccess();
       }
     }
 
-    // 返回密碼輸入畫面（方便切換不同年份）
     function goBack() {
       document.getElementById("pw").value = "";
-      document.getElementById("gate").style.display = "block";
+      document.getElementById("error-msg").style.display = "none";
+      document.getElementById("gate").style.display = "flex";
       document.getElementById("content-2025").style.display = "none";
       document.getElementById("content-2026").style.display = "none";
+      window.scrollTo(0, 0);
     }
   </script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background-color: #0d1620; /* 與新星空背景圖呼應的深夜空色 */
+      color: #ffffff;
       text-align: center;
-      background-color: #f9f9f9;
-      padding: 40px 20px;
     }
-    input, button {
-      padding: 10px 16px;
+
+    /* 密碼封面區：以小鳥星空圖為背景 */
+    #gate {
+      min-height: 100vh;
+      width: 100%;
+      background-color: #0d1620;
+      background-image: url('cover_bg.jpg');
+      background-size: contain;
+      background-position: center bottom;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 7vh 20px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 背景微光星塵粒子（封面與內頁共用） */
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ffd32a;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ffd32a, 0 0 12px #ffa502;
+      animation: twinkle 4s infinite ease-in-out;
+      pointer-events: none;
+    }
+    .s1 { top: 10%; left: 18%; animation-delay: 0s; }
+    .s2 { top: 22%; right: 15%; animation-delay: 1.2s; }
+    .s3 { top: 38%; left: 12%; animation-delay: 2.5s; }
+    .s4 { top: 15%; right: 28%; animation-delay: 3.1s; }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 0.95; transform: scale(1.4); }
+    }
+
+    /* 深色半透明毛玻璃密碼框 */
+    #gate-box {
+      background: rgba(15, 25, 38, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 26px 28px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+      max-width: 340px;
+      width: 100%;
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    #gate-box h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+    }
+
+    #gate-box p {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    /* 密碼輸入框 */
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
       font-size: 16px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-align: center;
+      letter-spacing: 2px;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
     }
-    button {
-      background-color: #ff6b81;
+    input[type="password"]::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+    input[type="password"]:focus {
+      border-color: #ff7675;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* 密碼錯誤提示 */
+    #error-msg {
+      display: none;
+      color: #ff7675;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    /* 解鎖按鈕 */
+    .unlock-btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 2px;
       color: white;
+      background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
       border: none;
+      border-radius: 10px;
       cursor: pointer;
+      box-shadow: 0 6px 18px rgba(214, 48, 49, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    button:hover {
-      background-color: #ff4757;
+    .unlock-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(214, 48, 49, 0.6);
     }
-    .back-btn {
-      background-color: #888;
-      font-size: 14px;
-      margin-top: 30px;
+    .unlock-btn:active {
+      transform: translateY(0);
+    }
+
+    /* 密碼錯誤搖晃動畫 */
+    .shake {
+      animation: shakeBox 0.4s ease-in-out;
+    }
+    @keyframes shakeBox {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* 解鎖後的卡片內頁樣式：統一改為深邃夜空漸層背景 */
+    .card-content {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0b141e 0%, #152536 50%, #0d1620 100%);
+      color: #f8fafc;
+      padding: 45px 20px 60px;
+      position: relative;
+      overflow-x: hidden;
+      animation: fadeInUp 0.9s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card-content h2 {
+      font-size: 26px;
+      letter-spacing: 2px;
+      color: #ffd32a; /* 香檳金標題，與星空呼應 */
+      text-shadow: 0 2px 10px rgba(255, 211, 42, 0.25);
+      margin-bottom: 20px;
     }
     .card-content img {
-      max-width: 90%;
-      margin: 20px auto;
+      max-width: 92%;
+      width: 550px;
+      margin: 22px auto;
       display: block;
-      border-radius: 8px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
     }
+    /* 深色毛玻璃祝福語方塊 */
     .message {
-      max-width: 600px;
-      margin: 15px auto;
-      line-height: 1.6;
-      font-size: 18px;
-      color: #333;
+      max-width: 550px;
+      margin: 15px auto 28px;
+      line-height: 1.8;
+      font-size: 17px;
+      color: #f1f5f9;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 22px 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    }
+    /* 返回按鈕 */
+    .back-btn {
+      background-color: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 10px 24px;
+      font-size: 14px;
+      border-radius: 20px;
+      margin-top: 28px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-1px);
     }
   </style>
 </head>
 <body>
-  <!-- 密碼輸入區 -->
+  <!-- 密碼封面區（小鳥星空背景圖） -->
   <div id="gate">
-    <h2>🎁 專屬生日驚喜</h2>
-    <p>請輸入專屬密碼解鎖你的生日卡片：</p>
-    <input type="password" id="pw" placeholder="請輸入密碼" onkeypress="handleKeyPress(event)">
-    <br>
-    <button onclick="checkAccess()">解鎖</button>
+    <div class="sparkle s1"></div>
+    <div class="sparkle s2"></div>
+    <div class="sparkle s3"></div>
+    <div class="sparkle s4"></div>
+
+    <div id="gate-box">
+      <h2>For Kelly ❤️</h2>
+      <p>輸入專屬密碼，開啟你的生日驚喜</p>
+      <input type="password" id="pw" placeholder="請輸入密碼" onkeypress="handleKeyPress(event)">
+      <div id="error-msg">密碼不對喔，再試一次看看！</div>
+      <button class="unlock-btn" onclick="checkAccess()">解鎖卡片 ✨</button>
+    </div>
   </div>
 
-  <!-- 2025 年內容（密碼：20251120） -->
+  <!-- 2025 年內容（密碼：kelly20251120） -->
   <div id="content-2025" class="card-content" style="display:none;">
+    <div class="sparkle s1"></div>
+    <div class="sparkle s2"></div>
     <h2>🎉 2025 生日快樂！</h2>
     <img src="image2025_1.png" alt="2025回憶1">
     <img src="image2025_2.png" alt="2025回憶2">
-    <button class="back-btn" onclick="goBack()">輸入其他年份密碼</button>
+    <button class="back-btn" onclick="goBack()">← 返回輸入其他年份密碼</button>
   </div>
 
-  <!-- 2026 年內容（密碼：20261120） -->
+  <!-- 2026 年內容（密碼：kelly20261120） -->
   <div id="content-2026" class="card-content" style="display:none;">
+    <div class="sparkle s1"></div>
+    <div class="sparkle s2"></div>
     <h2>🎂 2026 生日快樂！</h2>
-    <p class="message">在這裡寫下你想說的 2026 年祝福語！</p>
+    <p class="message">遲到2日嘅生日卡😜</p>
     <img src="image2026_1.png" alt="2026驚喜1">
     <img src="image2026_2.png" alt="2026驚喜2">
-    <button class="back-btn" onclick="goBack()">輸入其他年份密碼</button>
+    <button class="back-btn" onclick="goBack()">← 返回輸入其他年份密碼</button>
   </div>
 </body>
 </html>
